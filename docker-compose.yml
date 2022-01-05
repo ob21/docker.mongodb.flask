@@ -1,0 +1,67 @@
+version: "3.3"
+services:
+  # https://www.patricksoftwareblog.com/how-to-configure-nginx-for-a-flask-web-application/
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+      #- "443:443"
+    depends_on:
+      - flask
+    networks:
+      - front
+#      - middle
+  flask:
+    build: .
+    #command: python -u app.py
+    command: gunicorn --workers=2 --bind :5000 app:app
+#    environment:
+#      - MONGODB_1_PORT_27017_TCP_ADDR=mongodb
+    #ports:
+    #  - "5000:5000"
+    expose:
+       - "5000"
+    volumes:
+      - .:/todo
+    depends_on:
+      - mongodb
+    # Flask has access to front and back networks
+    networks:
+#     - middle
+     - front
+     - back
+
+  mongodb:
+    image: mongo
+    # Add authentication
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    # Mongo has access only to back network
+    networks:
+     - back
+
+#  mongo-express:
+#    image: mongo-express
+#    environment:
+#      # mongodb authentication
+#      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+#      - ME_CONFIG_MONGODB_ADMINPASSWORD=example
+#      # mongodb URI
+#      - ME_CONFIG_MONGODB_SERVER=mongodb
+#      - ME_CONFIG_MONGODB_PORT=27017
+#      # web login username and password
+#      - ME_CONFIG_BASICAUTH_USERNAME=mongo
+#      - ME_CONFIG_BASICAUTH_PASSWORD=express
+#    depends_on:
+#      - mongodb
+#    ports:
+#      - 8081:8081
+
+networks:
+  front:
+    driver: bridge
+#  middle:
+#    driver: bridge
+  back:
+    driver: bridge
