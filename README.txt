@@ -1,4 +1,17 @@
 https://www.youtube.com/watch?v=6opltZu4ABw
+https://www.programonaut.com/setup-ssl-with-docker-nginx-and-lets-encrypt/
+
+# Install Docker
+sudo apt install docker-ce
+
+
+
+# Install Docker Compose
+
+
+
+# Add your account to docker group to prevent using 'sudo' each time
+sudo usermod -aG docker ${USER}
 
 
 # Docker version
